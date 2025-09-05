@@ -89,12 +89,21 @@ const Navbar = () => {
   ];
 
   // Filter projects based on global search
-  const filteredProjects = allProjects.filter((project) =>
-    project.title.toLowerCase().includes(globalSearchValue.toLowerCase()) ||
-    project.description.toLowerCase().includes(globalSearchValue.toLowerCase()) ||
-    project.clientName.toLowerCase().includes(globalSearchValue.toLowerCase()) ||
-    project.projectType.toLowerCase().includes(globalSearchValue.toLowerCase()) ||
-    project.stack.some(tech => tech.toLowerCase().includes(globalSearchValue.toLowerCase()))
+  const filteredProjects = allProjects.filter(
+    (project) =>
+      project.title.toLowerCase().includes(globalSearchValue.toLowerCase()) ||
+      project.description
+        .toLowerCase()
+        .includes(globalSearchValue.toLowerCase()) ||
+      project.clientName
+        .toLowerCase()
+        .includes(globalSearchValue.toLowerCase()) ||
+      project.projectType
+        .toLowerCase()
+        .includes(globalSearchValue.toLowerCase()) ||
+      project.stack.some((tech) =>
+        tech.toLowerCase().includes(globalSearchValue.toLowerCase())
+      )
   );
 
   const themes = [
@@ -324,11 +333,12 @@ const Navbar = () => {
                   ) : (
                     <>
                       <div className="text-xs text-neutral-500 dark:text-neutral-400 mb-2 px-1">
-                        Found {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''}
+                        Found {filteredProjects.length} project
+                        {filteredProjects.length !== 1 ? "s" : ""}
                       </div>
                       {filteredProjects.slice(0, 8).map((project) => (
                         <Link
-                          key={project.id}
+                          key={project.title}
                           href={`/${project.status}`}
                           onClick={() => {
                             setIsSearchOpen(false);
@@ -342,7 +352,11 @@ const Navbar = () => {
                                 <h4 className="text-sm font-medium text-neutral-800 dark:text-neutral-200 truncate">
                                   {project.title}
                                 </h4>
-                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ${getStatusColor(project.status)}`}>
+                                <span
+                                  className={`px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ${getStatusColor(
+                                    project.status
+                                  )}`}
+                                >
                                   {project.status}
                                 </span>
                               </div>
@@ -353,14 +367,16 @@ const Navbar = () => {
                                 {project.description.substring(0, 80)}...
                               </p>
                               <div className="flex items-center gap-1 mt-2 flex-wrap">
-                                {project.stack.slice(0, 3).map((tech, index) => (
-                                  <span
-                                    key={index}
-                                    className="px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded text-xs"
-                                  >
-                                    {tech}
-                                  </span>
-                                ))}
+                                {project.stack
+                                  .slice(0, 3)
+                                  .map((tech, index) => (
+                                    <span
+                                      key={index}
+                                      className="px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded text-xs"
+                                    >
+                                      {tech}
+                                    </span>
+                                  ))}
                                 {project.stack.length > 3 && (
                                   <span className="text-xs text-neutral-400">
                                     +{project.stack.length - 3}
@@ -373,7 +389,8 @@ const Navbar = () => {
                       ))}
                       {filteredProjects.length > 8 && (
                         <div className="text-center text-xs text-neutral-400 pt-2 border-t border-neutral-200 dark:border-neutral-700">
-                          Showing first 8 results. Refine search for more specific results.
+                          Showing first 8 results. Refine search for more
+                          specific results.
                         </div>
                       )}
                     </>
