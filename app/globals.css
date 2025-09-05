@@ -1,1 +1,237 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap");
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-light-bg: #ffffff;
+  --color-dark-bg: #121212;
+  --font-nunito: "Nunito", sans-serif;
+}
+
+@layer utilities {
+  @keyframes overlayOut {
+    0%, 80% { opacity: 1; }
+    100%    { opacity: 0; }
+  }
+  @keyframes flare {
+    0%   { opacity: 0; transform: scale(0.8); }
+    35%  { opacity: 0.9; transform: scale(1.1); }
+    65%  { opacity: 0.5; transform: scale(1.5); }
+    100% { opacity: 0; transform: scale(1.7); }
+  }
+  @keyframes textIn {
+    0%   { opacity: 0; filter: blur(10px); transform: translateY(8px) scale(0.99); }
+    40%  { opacity: 1; filter: blur(0);    transform: translateY(0)   scale(1.00); }
+    80%  { opacity: 1; }
+    100% { opacity: 0; filter: blur(4px);  transform: translateY(-4px) scale(0.995); }
+  }
+
+  .animate-overlayOut { animation: overlayOut var(--intro-dur, 3000ms) ease forwards; }
+  .animate-flare      { animation: flare      var(--intro-dur, 3000ms) ease forwards; }
+  .animate-textIn     { animation: textIn     var(--intro-dur, 3000ms) ease forwards; }
+}
+
+/* Selection styling for dark/light mode */
+::selection {
+  background: #343434; /* Tailwind gray-500 */
+  color: #bcbcbc;
+}
+.dark ::selection {
+  background: #4a4a4a; /* Tailwind gray-700 */
+  color: #cfcfcf;
+}
+
+body {
+  @apply bg-light-bg dark:bg-dark-bg font-nunito transition-all;
+}
+
+.mdCustom {
+  font-family: var(--font-nunito);
+  color: #222;
+  background: transparent;
+  line-height: 1.7;
+  font-size: 0.97rem;
+  word-break: break-word;
+  font-weight: 400;
+}
+
+.dark .mdCustom {
+  color: #e5e7eb;
+}
+
+.mdCustom h1,
+.mdCustom h2,
+.mdCustom h3,
+.mdCustom h4,
+.mdCustom h5,
+.mdCustom h6 {
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: #222;
+}
+.dark .mdCustom h1,
+.dark .mdCustom h2,
+.dark .mdCustom h3,
+.dark .mdCustom h4,
+.dark .mdCustom h5,
+.dark .mdCustom h6 {
+  color: #e5e7eb;
+}
+
+.mdCustom h1 {
+  font-size: 1.35rem;
+}
+.mdCustom h2 {
+  font-size: 1.18rem;
+}
+.mdCustom h3 {
+  font-size: 1.08rem;
+}
+.mdCustom h4,
+.mdCustom h5,
+.mdCustom h6 {
+  font-size: 1rem;
+}
+
+.mdCustom p {
+  margin: 0.7rem 0;
+  font-size: 0.97rem;
+  font-weight: 400;
+}
+
+.mdCustom ul,
+.mdCustom ol {
+  margin: 1rem 0 1rem 2rem;
+  padding-left: 1.5rem;
+}
+.mdCustom ul {
+  list-style-type: disc;
+}
+.mdCustom ol {
+  list-style-type: decimal;
+}
+.mdCustom li {
+  margin-bottom: 0.5rem;
+}
+
+.mdCustom a {
+  color: #2563eb;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+.mdCustom a:hover {
+  color: #1e40af;
+}
+.dark .mdCustom a {
+  color: #60a5fa;
+}
+.dark .mdCustom a:hover {
+  color: #3b82f6;
+}
+
+.mdCustom blockquote {
+  border-left: 4px solid #e5e7eb;
+  background: #f9fafb;
+  color: #555;
+  padding: 0.75rem 1rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+}
+.dark .mdCustom blockquote {
+  border-left: 4px solid #374151;
+  background: #18181b;
+  color: #aaa;
+}
+
+
+/* Inline code */
+.mdCustom :not(pre) > code {
+  background: #f3f4f6;
+  color: #d97706;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-size: 0.95em;
+  font-family: "Fira Mono", "Menlo", "Monaco", "Consolas", monospace;
+  white-space: break-spaces;
+}
+.dark .mdCustom :not(pre) > code {
+  background: #18181b;
+  color: #fbbf24;
+}
+
+/* Code block */
+.mdCustom pre {
+  background: #f3f4f6;
+  color: #222;
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  font-size: 0.95em;
+  font-family: "Fira Mono", "Menlo", "Monaco", "Consolas", monospace;
+}
+.dark .mdCustom pre {
+  background: #18181b;
+  color: #e5e7eb;
+}
+.mdCustom pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+  font-family: inherit;
+}
+
+
+.mdCustom table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+.mdCustom th,
+.mdCustom td {
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem 1rem;
+}
+.mdCustom th {
+  background: #f3f4f6;
+  font-weight: 600;
+}
+.dark .mdCustom th {
+  background: #18181b;
+}
+.dark .mdCustom th,
+.dark .mdCustom td {
+  border-color: #374151;
+}
+
+.mdCustom img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin: 1rem 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+@media (max-width: 640px) {
+  .mdCustom h1 {
+    font-size: 1.08rem;
+  }
+  .mdCustom h2 {
+    font-size: 1rem;
+  }
+  .mdCustom h3 {
+    font-size: 0.97rem;
+  }
+  .mdCustom h4,
+  .mdCustom h5,
+  .mdCustom h6 {
+    font-size: 0.97rem;
+  }
+  .mdCustom pre,
+  .mdCustom code {
+    font-size: 0.88em;
+  }
+}
