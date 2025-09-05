@@ -300,7 +300,7 @@ const Navbar = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
                 transition={{ duration: 0.2 }}
-                className={`absolute mt-2 bg-white dark:bg-neutral-800 rounded-xl shadow-lg border border-neutral-200 dark:border-neutral-700 p-3 min-w-[320px] max-w-[400px] max-h-[70vh] overflow-y-auto ${dropdownPosition}`}
+                className={`absolute mt-2 bg-white dark:bg-neutral-800 rounded-xl shadow-lg border border-neutral-200 dark:border-neutral-700 p-3 w-64 sm:min-w-[320px] sm:max-w-[400px] max-h-[70vh] overflow-y-auto ${dropdownPosition}`}
               >
                 {/* Search Input */}
                 <div className="flex items-center gap-2 mb-3">
