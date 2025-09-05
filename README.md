@@ -1,3 +1,20 @@
+<div align="center">
+  <img src="public/logo.png" alt="Logo" width="80" height="80">
+  
+  <h3>Poyraz Avsever's Status Dashboard</h3>
+  
+  <p>Status for <a href="https://poyrazavsever.com">poyrazavsever.com</a> projects</p>
+
+[![Next.js](https://img.shields.io/badge/Next.js-15.5.2-black)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.1.0-blue)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC)](https://tailwindcss.com/)
+[![Framer Motion](https://img.shields.io/badge/Framer_Motion-12.23.12-pink)](https://www.framer.com/motion/)
+
+</div>
+
+---
+
 # Project Status Dashboard
 
 A modern, real-time project status monitoring dashboard built with Next.js 15 and TypeScript. This platform provides transparent visibility into development projects, their current status, and progress updates.
