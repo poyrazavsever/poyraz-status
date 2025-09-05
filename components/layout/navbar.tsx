@@ -5,6 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
+import { activeProjects } from "@/data/active";
+import { pendingProjects } from "@/data/pending";
+import { inactiveProjects } from "@/data/inactive";
 
 const allNavItems = [
   {
@@ -68,12 +71,31 @@ const Navbar = () => {
   const [isThemeOpen, setIsThemeOpen] = useState(false);
   const [isSocialOpen, setIsSocialOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [globalSearchValue, setGlobalSearchValue] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
   const themeRef = useRef<HTMLDivElement>(null);
   const socialRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
 
   const pathname = usePathname();
+
+  // Combine all projects for global search
+  const allProjects = [
+    ...activeProjects,
+    ...pendingProjects,
+    ...inactiveProjects,
+  ];
+
+  // Filter projects based on global search
+  const filteredProjects = allProjects.filter((project) =>
+    project.title.toLowerCase().includes(globalSearchValue.toLowerCase()) ||
+    project.description.toLowerCase().includes(globalSearchValue.toLowerCase()) ||
+    project.clientName.toLowerCase().includes(globalSearchValue.toLowerCase()) ||
+    project.projectType.toLowerCase().includes(globalSearchValue.toLowerCase()) ||
+    project.stack.some(tech => tech.toLowerCase().includes(globalSearchValue.toLowerCase()))
+  );
 
   const themes = [
     { id: "light", icon: "mdi:weather-sunny", label: "Light" },
@@ -118,6 +140,12 @@ const Navbar = () => {
       ) {
         setIsSocialOpen(false);
       }
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target as Node)
+      ) {
+        setIsSearchOpen(false);
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -134,6 +162,20 @@ const Navbar = () => {
   const filteredNavItems = allNavItems.filter((item) =>
     item.label.toLowerCase().includes(searchValue.toLowerCase())
   );
+
+  // Get status color for project
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "active":
+        return "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300";
+      case "pending":
+        return "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300";
+      case "inactive":
+        return "bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300";
+      default:
+        return "bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300";
+    }
+  };
 
   return (
     <>
@@ -154,6 +196,7 @@ const Navbar = () => {
               setIsMenuOpen(!isMenuOpen);
               setIsThemeOpen(false);
               setIsSocialOpen(false);
+              setIsSearchOpen(false);
             }}
             className="p-2 rounded-lg bg-white/90 dark:bg-neutral-800/90 backdrop-blur-md border border-neutral-200 dark:border-neutral-700 shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer"
           >
@@ -225,6 +268,122 @@ const Navbar = () => {
           </AnimatePresence>
         </div>
 
+        {/* Global Search */}
+        <div className="relative" ref={searchRef}>
+          <button
+            onClick={() => {
+              setIsSearchOpen(!isSearchOpen);
+              setIsMenuOpen(false);
+              setIsThemeOpen(false);
+              setIsSocialOpen(false);
+            }}
+            className="p-2 rounded-lg bg-white/90 dark:bg-neutral-800/90 backdrop-blur-md border border-neutral-200 dark:border-neutral-700 shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer"
+          >
+            <Icon
+              icon="hugeicons:search-01"
+              className="text-neutral-600 dark:text-neutral-300 w-6 h-6"
+            />
+          </button>
+          <AnimatePresence>
+            {isSearchOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.2 }}
+                className={`absolute mt-2 bg-white dark:bg-neutral-800 rounded-xl shadow-lg border border-neutral-200 dark:border-neutral-700 p-3 min-w-[320px] max-w-[400px] max-h-[70vh] overflow-y-auto ${dropdownPosition}`}
+              >
+                {/* Search Input */}
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="flex items-center w-full bg-neutral-100 dark:bg-neutral-700 rounded-lg px-3 py-2">
+                    <Icon
+                      icon="hugeicons:search-01"
+                      className="w-4 h-4 text-neutral-400 dark:text-neutral-300 mr-2 flex-shrink-0"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Search projects..."
+                      value={globalSearchValue}
+                      onChange={(e) => setGlobalSearchValue(e.target.value)}
+                      className="bg-transparent outline-none w-full text-sm text-neutral-700 dark:text-neutral-200 placeholder:text-neutral-400 dark:placeholder:text-neutral-400"
+                      autoFocus
+                    />
+                  </div>
+                </div>
+
+                {/* Search Results */}
+                <div className="space-y-2">
+                  {globalSearchValue.trim() === "" ? (
+                    <div className="text-center text-xs text-neutral-400 py-4">
+                      Type to search across all projects...
+                    </div>
+                  ) : filteredProjects.length === 0 ? (
+                    <div className="text-center text-xs text-neutral-400 py-4">
+                      No projects found for "{globalSearchValue}"
+                    </div>
+                  ) : (
+                    <>
+                      <div className="text-xs text-neutral-500 dark:text-neutral-400 mb-2 px-1">
+                        Found {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''}
+                      </div>
+                      {filteredProjects.slice(0, 8).map((project) => (
+                        <Link
+                          key={project.id}
+                          href={`/${project.status}`}
+                          onClick={() => {
+                            setIsSearchOpen(false);
+                            setGlobalSearchValue("");
+                          }}
+                          className="block p-3 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors border border-transparent hover:border-neutral-200 dark:hover:border-neutral-600"
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h4 className="text-sm font-medium text-neutral-800 dark:text-neutral-200 truncate">
+                                  {project.title}
+                                </h4>
+                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ${getStatusColor(project.status)}`}>
+                                  {project.status}
+                                </span>
+                              </div>
+                              <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1 truncate">
+                                {project.clientName}
+                              </p>
+                              <p className="text-xs text-neutral-400 dark:text-neutral-500 line-clamp-2">
+                                {project.description.substring(0, 80)}...
+                              </p>
+                              <div className="flex items-center gap-1 mt-2 flex-wrap">
+                                {project.stack.slice(0, 3).map((tech, index) => (
+                                  <span
+                                    key={index}
+                                    className="px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded text-xs"
+                                  >
+                                    {tech}
+                                  </span>
+                                ))}
+                                {project.stack.length > 3 && (
+                                  <span className="text-xs text-neutral-400">
+                                    +{project.stack.length - 3}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                      {filteredProjects.length > 8 && (
+                        <div className="text-center text-xs text-neutral-400 pt-2 border-t border-neutral-200 dark:border-neutral-700">
+                          Showing first 8 results. Refine search for more specific results.
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
         {/* Theme Switcher */}
         <div className="relative" ref={themeRef}>
           <button
@@ -232,6 +391,7 @@ const Navbar = () => {
               setIsThemeOpen(!isThemeOpen);
               setIsMenuOpen(false);
               setIsSocialOpen(false);
+              setIsSearchOpen(false);
             }}
             className="p-2 rounded-lg bg-white/90 dark:bg-neutral-800/90 backdrop-blur-md border border-neutral-200 dark:border-neutral-700 shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer"
           >
@@ -278,6 +438,7 @@ const Navbar = () => {
               setIsSocialOpen(!isSocialOpen);
               setIsThemeOpen(false);
               setIsMenuOpen(false);
+              setIsSearchOpen(false);
             }}
             className="p-2 rounded-lg bg-white/90 dark:bg-neutral-800/90 backdrop-blur-md border border-neutral-200 dark:border-neutral-700 shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer"
           >
