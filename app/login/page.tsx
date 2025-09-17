@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { login } from "./action";
@@ -8,6 +9,7 @@ const Login = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -21,8 +23,13 @@ const Login = () => {
     formData.append("email", form.email);
     formData.append("password", form.password);
     try {
-      await login(formData);
+      const result = await login(formData);
+      // Supabase access token'ı cookie olarak setle
+      if (result?.session?.access_token) {
+        document.cookie = `sb-access-token=${result.session.access_token}; path=/; secure; samesite=strict`;
+      }
       toast.success("Welcome");
+      router.push("/admin");
     } catch (err: any) {
       toast.error("Hahaha");
       setError(err?.message || "Login failed");
