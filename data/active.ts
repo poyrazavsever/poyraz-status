@@ -28,7 +28,7 @@ export const activeProjects: ActiveProject[] = [
       "Iconify",
     ],
     liveUrl: "https://poyrazavsever.com",
-    lastUpdated: "2 hours ago",
+    lastUpdated: "08/09/2025",
   },
   {
     id: "2",
@@ -40,7 +40,7 @@ export const activeProjects: ActiveProject[] = [
     projectType: "Blog Website",
     stack: ["Next.js", "Framer Motion", "Firebase", "Tailwind CSS"],
     liveUrl: "https://athenasifa.com",
-    lastUpdated: "30 minutes ago",
+    lastUpdated: "10/09/2025",
   },
   {
     id: "3",
@@ -52,7 +52,7 @@ export const activeProjects: ActiveProject[] = [
     projectType: "Blog Website",
     stack: ["Next.js", "Framer Motion", "Mongodb", "Tailwind CSS"],
     liveUrl: "https://arcforeigntrade.com",
-    lastUpdated: "1 hour ago",
+    lastUpdated: "10/09/2025",
   },
   {
     id: "4",
@@ -64,7 +64,7 @@ export const activeProjects: ActiveProject[] = [
     projectType: "Full Stack Web App",
     stack: ["React", "Node.js", "Express", "MongoDB"],
     liveUrl: "https://readme-maker-eight.vercel.app/",
-    lastUpdated: "4 hours ago",
+    lastUpdated: "10/09/2025",
   },
   {
     id: "5",
@@ -76,6 +76,42 @@ export const activeProjects: ActiveProject[] = [
     projectType: "Full Stack Web App",
     stack: ["Nextjs", "Tailwind CSS", "TypeScript", "Storybook"],
     liveUrl: "https://ui.poyrazavsever.com/",
-    lastUpdated: "4 hours ago",
+    lastUpdated: "10/09/2025",
+  },
+  {
+    id: "6",
+    title: "Kalfaoğulları Construction",
+    description:
+      "A comprehensive website showcasing Kalfaoğulları Construction's projects, services, and company information.",
+    status: "active",
+    clientName: "Kalfaoğulları",
+    projectType: "Company Website",
+    stack: ["React", "Next.js", "Tailwind CSS", "TypeScript", "Framer Motion"],
+    liveUrl: "https://kalfaogullari.com.tr/",
+    lastUpdated: "17/09/2025",
+  },
+  {
+    id: "7",
+    title: "The Meaning of Our Anthems",
+    description:
+      "Turkey's national anthems explained with historical context, lyrics analysis, and multimedia content. A cultural exploration platform.",
+    status: "active",
+    clientName: "Self",
+    projectType: "Web Application",
+    stack: ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
+    liveUrl: "https://mars.poyrazavsever.com",
+    lastUpdated: "17/09/2025",
+  },
+  {
+    id: "8",
+    title: "Earthquake Awareness",
+    description:
+      "Educational platform providing resources, safety tips, and real-time alerts about earthquakes.",
+    status: "active",
+    clientName: "Huawei Student Developer - OSTIM",
+    projectType: "Enterprise Application",
+    stack: ["Next.js", "Supabase", "Typescript", "Tailwind CSS", "Docker"],
+    liveUrl: "https://deprembilinci.poyrazavsever.com",
+    lastUpdated: "17/09/2025",
   },
 ];
