@@ -1,38 +1,82 @@
 "use client";
 
-import StatusCard from "@/components/shared/statusCard";
-import { inactiveProjects } from "@/data/inactive";
 import { motion } from "framer-motion";
+import StatusCard from "@/components/shared/statusCard";
+import rawProjects from "@/data/projects.json";
+import type { AnyProject, InactiveProject } from "@/types/project";
+
+// --- Type guard ---
+function isInactiveProject(p: AnyProject): p is InactiveProject {
+  return p.status === "inactive";
+}
+
+// --- lastUpdated normalizer ---
+// Desteklenen formatlar: "DD/MM/YYYY", "X day(s)/week(s)/month(s)/hour(s) ago"
+function getLastUpdatedDate(text: string): Date {
+  const now = new Date();
+
+  // 1) Relative: "3 hours ago", "2 days ago", "1 week ago", "5 months ago"
+  const rel = text.trim().toLowerCase().match(/^(\d+)\s+(hour|day|week|month)s?\s+ago$/);
+  if (rel) {
+    const amount = parseInt(rel[1], 10);
+    const unit = rel[2];
+    const d = new Date(now);
+    switch (unit) {
+      case "hour":
+        d.setHours(d.getHours() - amount);
+        return d;
+      case "day":
+        d.setDate(d.getDate() - amount);
+        return d;
+      case "week":
+        d.setDate(d.getDate() - amount * 7);
+        return d;
+      case "month":
+        d.setMonth(d.getMonth() - amount);
+        return d;
+      default:
+        return new Date(0);
+    }
+  }
+
+  // 2) Absolute: "DD/MM/YYYY"
+  const abs = text.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (abs) {
+    const [_, d, m, y] = abs;
+    const day = parseInt(d, 10);
+    const monthIdx = parseInt(m, 10) - 1; // 0-based
+    const year = parseInt(y, 10);
+    return new Date(year, monthIdx, day);
+  }
+
+  // 3) Son çare: Date parsable string ya da çok eski
+  const fallback = new Date(text);
+  if (!isNaN(fallback.getTime())) return fallback;
+
+  return new Date(0); // bilinmiyorsa en eski
+}
 
 export default function InactivePage() {
-  // Animation variants
+  const projects = rawProjects as AnyProject[];
+  const inactiveProjects = projects.filter(isInactiveProject);
+
+  const sortedProjects = [...inactiveProjects].sort(
+    (a, b) => getLastUpdatedDate(b.lastUpdated).getTime() - getLastUpdatedDate(a.lastUpdated).getTime()
+  );
+
+  // Animations
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
   } as const;
 
   const cardVariants = {
-    hidden: {
-      opacity: 0,
-      y: 50,
-      scale: 0.9,
-    },
+    hidden: { opacity: 0, y: 50, scale: 0.9 },
     visible: {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: {
-        duration: 0.5,
-        type: "spring",
-        stiffness: 100,
-        damping: 15,
-      },
+      transition: { duration: 0.5, type: "spring", stiffness: 100, damping: 15 },
     },
   } as const;
 
@@ -41,26 +85,9 @@ export default function InactivePage() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: {
-        duration: 0.6,
-        type: "spring",
-        stiffness: 100,
-        damping: 15,
-      },
+      transition: { duration: 0.6, type: "spring", stiffness: 100, damping: 15 },
     },
   } as const;
-
-  // Sort projects by last updated (most recent first)
-  const sortedProjects = [...inactiveProjects].sort((a, b) => {
-    // Simple date comparison based on text (this would be better with actual dates)
-    const getTimeValue = (text: string) => {
-      if (text.includes("day")) return 1;
-      if (text.includes("week")) return 7;
-      if (text.includes("month")) return 30;
-      return 120; // default for older
-    };
-    return getTimeValue(a.lastUpdated) - getTimeValue(b.lastUpdated);
-  });
 
   return (
     <div className="container mx-auto px-4 py-8 mt-24 sm:mt-0">
@@ -73,30 +100,25 @@ export default function InactivePage() {
       >
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-900/30">
-            <div className="w-6 h-6 bg-gray-400 rounded-full"></div>
+            <div className="w-6 h-6 bg-gray-400 rounded-full" />
           </div>
           <h1 className="text-4xl font-bold text-neutral-800 dark:text-neutral-200">
             Inactive Projects
           </h1>
         </div>
         <p className="text-neutral-600 dark:text-neutral-400 max-w-2xl">
-          Completed, archived, or temporarily suspended projects. These projects
-          are no longer in active development but may be maintained or revived
-          in the future.
+          Completed, archived, or temporarily suspended projects. These projects are no longer in active
+          development but may be maintained or revived in the future.
         </p>
         <div className="mt-4 flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-neutral-500 dark:text-neutral-400">
-              Total Inactive Projects:
-            </span>
+            <span className="text-sm text-neutral-500 dark:text-neutral-400">Total Inactive Projects:</span>
             <span className="px-3 py-1 bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium">
               {inactiveProjects.length}
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-neutral-500 dark:text-neutral-400">
-              Status:
-            </span>
+            <span className="text-sm text-neutral-500 dark:text-neutral-400">Status:</span>
             <span className="px-3 py-1 bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium">
               Archived
             </span>
@@ -104,7 +126,7 @@ export default function InactivePage() {
         </div>
       </motion.div>
 
-      {/* Status Cards Grid */}
+      {/* Grid */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -116,11 +138,12 @@ export default function InactivePage() {
             <StatusCard
               title={project.title}
               description={project.description}
-              status={project.status}
+              status={project.status}         
               clientName={project.clientName}
               projectType={project.projectType}
               stack={project.stack}
               lastUpdated={project.lastUpdated}
+              /* liveUrl yok: InactiveProject tipinde bulunmuyor */
             />
           </motion.div>
         ))}
