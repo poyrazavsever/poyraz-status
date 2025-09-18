@@ -1,20 +1,15 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
-import { activeProjects } from "@/data/active";
-import { pendingProjects } from "@/data/pending";
-import { inactiveProjects } from "@/data/inactive";
+import rawProjects from "@/data/projects.json"; // ← tek kaynak
+import type { AnyProject } from "@/types/project";
 
 const allNavItems = [
-  {
-    href: "/active",
-    icon: "hugeicons:live-streaming-02",
-    label: "Active",
-  },
+  { href: "/active", icon: "hugeicons:live-streaming-02", label: "Active" },
   {
     href: "/pending",
     icon: "hugeicons:computer-programming-02",
@@ -81,30 +76,22 @@ const Navbar = () => {
 
   const pathname = usePathname();
 
-  // Combine all projects for global search
-  const allProjects = [
-    ...activeProjects,
-    ...pendingProjects,
-    ...inactiveProjects,
-  ];
+  // Combine all projects for global search from single JSON
+  const allProjects = useMemo(() => rawProjects as AnyProject[], []);
 
-  // Filter projects based on global search
-  const filteredProjects = allProjects.filter(
-    (project) =>
-      project.title.toLowerCase().includes(globalSearchValue.toLowerCase()) ||
-      project.description
-        .toLowerCase()
-        .includes(globalSearchValue.toLowerCase()) ||
-      project.clientName
-        .toLowerCase()
-        .includes(globalSearchValue.toLowerCase()) ||
-      project.projectType
-        .toLowerCase()
-        .includes(globalSearchValue.toLowerCase()) ||
-      project.stack.some((tech) =>
-        tech.toLowerCase().includes(globalSearchValue.toLowerCase())
-      )
-  );
+  // Filter projects based on global search (memoized)
+  const filteredProjects = useMemo(() => {
+    const q = globalSearchValue.trim().toLowerCase();
+    if (!q) return [];
+    return allProjects.filter(
+      (project) =>
+        project.title.toLowerCase().includes(q) ||
+        project.description.toLowerCase().includes(q) ||
+        project.clientName.toLowerCase().includes(q) ||
+        project.projectType.toLowerCase().includes(q) ||
+        project.stack.some((tech) => tech.toLowerCase().includes(q))
+    );
+  }, [allProjects, globalSearchValue]);
 
   const themes = [
     { id: "light", icon: "mdi:weather-sunny", label: "Light" },
@@ -115,11 +102,10 @@ const Navbar = () => {
   const handleThemeChange = (themeId: string) => {
     setActiveTheme(themeId);
     localStorage.setItem("theme", themeId);
-    if (
-      themeId === "dark" ||
-      (themeId === "system" &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches)
-    ) {
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    if (themeId === "dark" || (themeId === "system" && prefersDark)) {
       document.documentElement.classList.add("dark");
     } else {
       document.documentElement.classList.remove("dark");
@@ -134,29 +120,21 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node))
         setIsMenuOpen(false);
-      }
-      if (
-        themeRef.current &&
-        !themeRef.current.contains(event.target as Node)
-      ) {
+      if (themeRef.current && !themeRef.current.contains(event.target as Node))
         setIsThemeOpen(false);
-      }
       if (
         socialRef.current &&
         !socialRef.current.contains(event.target as Node)
-      ) {
+      )
         setIsSocialOpen(false);
-      }
       if (
         searchRef.current &&
         !searchRef.current.contains(event.target as Node)
-      ) {
+      )
         setIsSearchOpen(false);
-      }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -167,20 +145,20 @@ const Navbar = () => {
       ? "left-1/2 -translate-x-1/2 right-auto"
       : "right-0";
 
-  // Filtered nav items for search
-  const filteredNavItems = allNavItems.filter((item) =>
-    item.label.toLowerCase().includes(searchValue.toLowerCase())
-  );
+  // Filtered nav items for quick nav search (memoized)
+  const filteredNavItems = useMemo(() => {
+    const q = searchValue.trim().toLowerCase();
+    return allNavItems.filter((item) => item.label.toLowerCase().includes(q));
+  }, [searchValue]);
 
   // Get status color for project
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: AnyProject["status"]) => {
     switch (status) {
       case "active":
         return "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300";
       case "pending":
         return "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300";
       case "inactive":
-        return "bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300";
       default:
         return "bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300";
     }
@@ -198,6 +176,7 @@ const Navbar = () => {
         >
           <img src="/logo.png" alt="logo" className="w-6 h-6" />
         </Link>
+
         {/* Navigation Dropdown */}
         <div className="relative" ref={menuRef}>
           <button
@@ -239,6 +218,8 @@ const Navbar = () => {
                     />
                   </div>
                 </div>
+
+                {/* Items */}
                 <div className="flex flex-col gap-1">
                   {filteredNavItems.length === 0 ? (
                     <div className="text-center text-xs text-neutral-400 py-2">
@@ -258,7 +239,6 @@ const Navbar = () => {
                               : "text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-900"
                           }`}
                         >
-                          {/* Menü iconu boş, yanında logo */}
                           <span className="flex items-center gap-2">
                             {item.icon ? (
                               <Icon icon={item.icon} className="w-5 h-5" />
@@ -338,7 +318,7 @@ const Navbar = () => {
                       </div>
                       {filteredProjects.slice(0, 8).map((project) => (
                         <Link
-                          key={project.title}
+                          key={`${project.id}-${project.title}`}
                           href={`/${project.status}`}
                           onClick={() => {
                             setIsSearchOpen(false);
@@ -367,16 +347,14 @@ const Navbar = () => {
                                 {project.description.substring(0, 80)}...
                               </p>
                               <div className="flex items-center gap-1 mt-2 flex-wrap">
-                                {project.stack
-                                  .slice(0, 3)
-                                  .map((tech, index) => (
-                                    <span
-                                      key={index}
-                                      className="px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded text-xs"
-                                    >
-                                      {tech}
-                                    </span>
-                                  ))}
+                                {project.stack.slice(0, 3).map((tech, idx) => (
+                                  <span
+                                    key={idx}
+                                    className="px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded text-xs"
+                                  >
+                                    {tech}
+                                  </span>
+                                ))}
                                 {project.stack.length > 3 && (
                                   <span className="text-xs text-neutral-400">
                                     +{project.stack.length - 3}
