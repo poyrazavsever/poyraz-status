@@ -1,7 +1,6 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import { motion } from "framer-motion";
 
 interface StatusCardProps {
   title: string;
@@ -66,19 +65,16 @@ const StatusCard: React.FC<StatusCardProps> = ({
   const config = getStatusConfig(status);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="group relative rounded-[28px] border border-(--color-border) bg-(--color-surface)/80 backdrop-blur-xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.2)] transition-all duration-300 h-full flex flex-col"
-    >
+    <div className="group relative rounded-[28px] border border-(--color-border) bg-(--color-surface)/80 backdrop-blur-xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.2)] transition-all duration-300 h-full flex flex-col">
       {/* Glow effect on hover */}
       <div className="absolute inset-0 rounded-[28px] bg-gradient-to-br from-(--color-accent)/0 to-(--color-accent)/0 group-hover:from-(--color-accent)/5 group-hover:to-(--color-accent)/0 transition-all duration-500 pointer-events-none" />
 
       {/* Header */}
       <div className="relative flex items-start justify-between mb-4">
         <div className="flex items-center gap-3 flex-1 min-w-0">
-          <div className={`p-3 rounded-2xl bg-(--color-background)/50 border border-(--color-border) flex-shrink-0`}>
+          <div
+            className={`p-3 rounded-2xl bg-(--color-background)/50 border border-(--color-border) flex-shrink-0`}
+          >
             <Icon
               icon={config.icon}
               className={`w-6 h-6 ${config.iconColor}`}
@@ -95,25 +91,34 @@ const StatusCard: React.FC<StatusCardProps> = ({
             )}
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2 flex-shrink-0 ml-3">
           <div
             className={`px-3 py-1.5 rounded-full text-xs font-medium ${config.statusBadge}`}
           >
             {config.statusText}
           </div>
-          
+
           {status === "active" && liveUrl && (
-            <motion.a
+            <a
               href={liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-(--color-accent-soft) text-(--color-accent) rounded-full text-xs font-medium hover:bg-(--color-accent)/20 transition-colors duration-200"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-(--color-accent-soft) text-(--color-accent) rounded-full text-xs font-medium hover:bg-(--color-accent)/20 hover:scale-105 active:scale-95 transition-all duration-200"
               title="View Live Site"
             >
               <Icon icon="solar:link-bold" className="w-3.5 h-3.5" />
+              <span>Live</span>
+            </a>
+          )}
+        </div>
+      </div>
+
+      {/* Description */}
+      <p className="relative text-sm text-(--color-muted) leading-relaxed mb-4 line-clamp-2 flex-grow">
+        {description}
+      </p>
+
       {/* Progress Bar (only for pending status) */}
       {status === "pending" && progress !== undefined && (
         <div className="relative mb-4">
@@ -126,11 +131,9 @@ const StatusCard: React.FC<StatusCardProps> = ({
             </span>
           </div>
           <div className="relative w-full bg-(--color-overlay) rounded-full h-2 overflow-hidden">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 1, ease: "easeOut" }}
-              className="h-full bg-gradient-to-r from-yellow-500 to-yellow-400 rounded-full"
+            <div
+              style={{ width: `${progress}%` }}
+              className="h-full bg-gradient-to-r from-yellow-500 to-yellow-400 rounded-full transition-all duration-1000 ease-out"
             />
           </div>
         </div>
@@ -197,18 +200,22 @@ const StatusCard: React.FC<StatusCardProps> = ({
 
           {/* Status Indicator Dot */}
           <div className="flex items-center gap-2 ml-auto">
-            <motion.div
-              animate={status === "active" ? { scale: [1, 1.2, 1] } : {}}
-              transition={{ duration: 2, repeat: Infinity }}
-              className={`w-2 h-2 rounded-full ${config.pulseColor}`}
+            <div
+              className={`w-2 h-2 rounded-full ${config.pulseColor} ${
+                status === "active" ? "animate-pulse" : ""
+              }`}
             />
             <span className="text-xs text-(--color-muted)">
-              {status === "active" ? "Online" : status === "pending" ? "Building" : "Offline"}
+              {status === "active"
+                ? "Online"
+                : status === "pending"
+                ? "Building"
+                : "Offline"}
             </span>
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
