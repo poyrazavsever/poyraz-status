@@ -68,7 +68,7 @@ export default function Home() {
   } as const;
 
   return (
-    <div className="container mx-auto px-4 py-8 mt-24 sm:mt-0">
+    <div className="container mx-auto px-4 py-12 max-w-7xl">
       {/* Header */}
       <motion.div
         variants={headerVariants}
@@ -76,10 +76,10 @@ export default function Home() {
         animate="visible"
         className="text-start mb-12"
       >
-        <h1 className="text-4xl font-bold text-neutral-800 dark:text-neutral-200 mb-4">
+        <h1 className="text-4xl md:text-5xl font-bold text-(--color-text) mb-4">
           Project Status Dashboard
         </h1>
-        <p className="text-neutral-600 dark:text-neutral-400 max-w-2xl">
+        <p className="text-(--color-muted) text-lg max-w-2xl leading-relaxed">
           Real-time monitoring of my development projects and their current
           status. Stay updated with the latest progress on all ongoing work.
         </p>
@@ -91,7 +91,7 @@ export default function Home() {
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="h-48 rounded-2xl border border-neutral-200 bg-white/60 dark:border-neutral-800 dark:bg-neutral-900/50 animate-pulse"
+              className="h-64 rounded-[28px] border border-(--color-border) bg-(--color-surface)/50 animate-pulse backdrop-blur-xl"
             />
           ))}
         </div>

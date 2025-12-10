@@ -90,7 +90,7 @@ export default function InactivePage() {
   } as const;
 
   return (
-    <div className="container mx-auto px-4 py-8 mt-24 sm:mt-0">
+    <div className="container mx-auto px-4 py-12 max-w-7xl">
       {/* Header */}
       <motion.div
         variants={headerVariants}
@@ -98,28 +98,28 @@ export default function InactivePage() {
         animate="visible"
         className="text-start mb-12"
       >
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-900/30">
-            <div className="w-6 h-6 bg-gray-400 rounded-full" />
+        <div className="flex items-center gap-4 mb-4">
+          <div className="p-3 rounded-2xl bg-(--color-surface) border border-(--color-border)">
+            <div className="w-6 h-6 bg-(--color-muted) rounded-full" />
           </div>
-          <h1 className="text-4xl font-bold text-neutral-800 dark:text-neutral-200">
+          <h1 className="text-4xl md:text-5xl font-bold text-(--color-text)">
             Inactive Projects
           </h1>
         </div>
-        <p className="text-neutral-600 dark:text-neutral-400 max-w-2xl">
+        <p className="text-(--color-muted) text-lg max-w-2xl leading-relaxed">
           Completed, archived, or temporarily suspended projects. These projects are no longer in active
           development but may be maintained or revived in the future.
         </p>
         <div className="mt-4 flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-neutral-500 dark:text-neutral-400">Total Inactive Projects:</span>
-            <span className="px-3 py-1 bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium">
+            <span className="text-sm text-(--color-muted)">Total Inactive Projects:</span>
+            <span className="px-3 py-1 bg-(--color-surface) text-(--color-text) rounded-full text-sm font-medium border border-(--color-border)">
               {inactiveProjects.length}
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-neutral-500 dark:text-neutral-400">Status:</span>
-            <span className="px-3 py-1 bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium">
+            <span className="text-sm text-(--color-muted)">Status:</span>
+            <span className="px-3 py-1 bg-(--color-surface) text-(--color-text) rounded-full text-sm font-medium border border-(--color-border)">
               Archived
             </span>
           </div>
