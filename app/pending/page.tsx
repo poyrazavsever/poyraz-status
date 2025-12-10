@@ -98,7 +98,7 @@ export default function PendingPage() {
   } as const;
 
   return (
-    <div className="container mx-auto px-4 py-8 mt-24 sm:mt-0">
+    <div className="container mx-auto px-4 py-12 max-w-7xl">
       {/* Header */}
       <motion.div
         variants={headerVariants}
@@ -106,32 +106,32 @@ export default function PendingPage() {
         animate="visible"
         className="text-start mb-12"
       >
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 rounded-lg bg-yellow-100 dark:bg-yellow-900/30">
-            <div className="w-6 h-6 bg-yellow-500 rounded-full" />
+        <div className="flex items-center gap-4 mb-4">
+          <div className="p-3 rounded-2xl bg-(--color-accent-soft) border border-(--color-border)">
+            <div className="w-6 h-6 bg-(--color-accent) rounded-full" />
           </div>
-          <h1 className="text-4xl font-bold text-neutral-800 dark:text-neutral-200">
+          <h1 className="text-4xl md:text-5xl font-bold text-(--color-text)">
             Pending Projects
           </h1>
         </div>
-        <p className="text-neutral-600 dark:text-neutral-400 max-w-2xl">
+        <p className="text-(--color-muted) text-lg max-w-2xl leading-relaxed">
           Projects currently in development. These are actively being worked on
           and will be deployed once completed.
         </p>
         <div className="mt-4 flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-neutral-500 dark:text-neutral-400">
+            <span className="text-sm text-(--color-muted)">
               Total Pending Projects:
             </span>
-            <span className="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded-full text-sm font-medium">
-              {sortedProjects.length}
+            <span className="px-3 py-1 bg-(--color-accent-soft) text-(--color-accent) rounded-full text-sm font-medium border border-(--color-border)">
+              {pendingProjects.length}
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-neutral-500 dark:text-neutral-400">
+            <span className="text-sm text-(--color-muted)">
               Average Progress:
             </span>
-            <span className="px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 rounded-full text-sm font-medium">
+            <span className="px-3 py-1 bg-(--color-accent-soft) text-(--color-accent) rounded-full text-sm font-medium border border-(--color-border)">
               {averageProgress}%
             </span>
           </div>

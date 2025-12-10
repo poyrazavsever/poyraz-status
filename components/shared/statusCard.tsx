@@ -1,5 +1,7 @@
-import React from "react";
+"use client";
+
 import { Icon } from "@iconify/react";
+import { motion } from "framer-motion";
 
 interface StatusCardProps {
   title: string;
@@ -8,9 +10,9 @@ interface StatusCardProps {
   lastUpdated?: string;
   clientName?: string;
   projectType?: string;
-  stack?: string[]; // Tech stack array
-  progress?: number; // For pending projects (0-100)
-  liveUrl?: string; // Live URL for active projects
+  stack?: string[];
+  progress?: number;
+  liveUrl?: string;
 }
 
 const StatusCard: React.FC<StatusCardProps> = ({
@@ -28,43 +30,35 @@ const StatusCard: React.FC<StatusCardProps> = ({
     switch (status) {
       case "active":
         return {
-          icon: "hugeicons:live-streaming-02",
-          bgColor: "bg-green-50 dark:bg-green-950/20",
-          borderColor: "border-green-200 dark:border-green-800",
-          iconColor: "text-green-600 dark:text-green-400",
+          icon: "solar:play-circle-bold-duotone",
+          iconColor: "text-(--color-accent)",
           statusText: "Live & Active",
-          statusBg: "bg-green-100 dark:bg-green-900/30",
-          statusTextColor: "text-green-700 dark:text-green-300",
+          statusBadge: "bg-(--color-accent-soft) text-(--color-accent)",
+          pulseColor: "bg-(--color-accent)",
         };
       case "pending":
         return {
-          icon: "hugeicons:computer-programming-02",
-          bgColor: "bg-yellow-50 dark:bg-yellow-950/20",
-          borderColor: "border-yellow-200 dark:border-yellow-800",
-          iconColor: "text-yellow-600 dark:text-yellow-400",
+          icon: "solar:code-square-bold-duotone",
+          iconColor: "text-yellow-500",
           statusText: "In Development",
-          statusBg: "bg-yellow-100 dark:bg-yellow-900/30",
-          statusTextColor: "text-yellow-700 dark:text-yellow-300",
+          statusBadge: "bg-yellow-500/10 text-yellow-500",
+          pulseColor: "bg-yellow-500",
         };
       case "inactive":
         return {
-          icon: "hugeicons:cellular-network-offline",
-          bgColor: "bg-gray-50 dark:bg-gray-950/20",
-          borderColor: "border-gray-200 dark:border-gray-800",
-          iconColor: "text-gray-600 dark:text-gray-400",
+          icon: "solar:power-bold-duotone",
+          iconColor: "text-(--color-muted)",
           statusText: "Offline",
-          statusBg: "bg-gray-100 dark:bg-gray-900/30",
-          statusTextColor: "text-gray-700 dark:text-gray-300",
+          statusBadge: "bg-(--color-overlay) text-(--color-muted)",
+          pulseColor: "bg-(--color-muted)",
         };
       default:
         return {
-          icon: "hugeicons:cellular-network-offline",
-          bgColor: "bg-gray-50 dark:bg-gray-950/20",
-          borderColor: "border-gray-200 dark:border-gray-800",
-          iconColor: "text-gray-600 dark:text-gray-400",
+          icon: "solar:question-circle-bold-duotone",
+          iconColor: "text-(--color-muted)",
           statusText: "Unknown",
-          statusBg: "bg-gray-100 dark:bg-gray-900/30",
-          statusTextColor: "text-gray-700 dark:text-gray-300",
+          statusBadge: "bg-(--color-overlay) text-(--color-muted)",
+          pulseColor: "bg-(--color-muted)",
         };
     }
   };
@@ -72,84 +66,86 @@ const StatusCard: React.FC<StatusCardProps> = ({
   const config = getStatusConfig(status);
 
   return (
-    <div
-      className={`rounded-xl p-6 border ${config.bgColor} ${config.borderColor} backdrop-blur-md shadow-sm hover:shadow-lg transition-all duration-200 h-full flex flex-col`}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="group relative rounded-[28px] border border-(--color-border) bg-(--color-surface)/80 backdrop-blur-xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.2)] transition-all duration-300 h-full flex flex-col"
     >
+      {/* Glow effect on hover */}
+      <div className="absolute inset-0 rounded-[28px] bg-gradient-to-br from-(--color-accent)/0 to-(--color-accent)/0 group-hover:from-(--color-accent)/5 group-hover:to-(--color-accent)/0 transition-all duration-500 pointer-events-none" />
+
       {/* Header */}
-      <div className="flex items-start justify-between mb-4">
+      <div className="relative flex items-start justify-between mb-4">
         <div className="flex items-center gap-3 flex-1 min-w-0">
-          <div className={`p-2 rounded-lg ${config.statusBg} flex-shrink-0`}>
+          <div className={`p-3 rounded-2xl bg-(--color-background)/50 border border-(--color-border) flex-shrink-0`}>
             <Icon
               icon={config.icon}
-              className={`w-5 h-5 ${config.iconColor}`}
+              className={`w-6 h-6 ${config.iconColor}`}
             />
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="font-semibold text-neutral-800 dark:text-neutral-200 text-lg leading-tight truncate">
+            <h3 className="font-semibold text-(--color-text) text-lg leading-tight truncate">
               {title}
             </h3>
             {clientName && (
-              <p className="text-sm text-neutral-500 dark:text-neutral-400 truncate">
+              <p className="text-sm text-(--color-muted) truncate mt-0.5">
                 {clientName}
               </p>
             )}
           </div>
         </div>
-        <div
-          className={`px-3 py-1 rounded-full text-xs font-medium ${config.statusBg} ${config.statusTextColor} flex-shrink-0 ml-2`}
-        >
-          {config.statusText}
-        </div>
-        {/* Live URL Button for Active Projects */}
-        {status === "active" && liveUrl && (
-          <a
-            href={liveUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-lg text-xs font-medium hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors duration-200 flex-shrink-0 ml-2"
-            title="View Live Site"
+        
+        <div className="flex items-center gap-2 flex-shrink-0 ml-3">
+          <div
+            className={`px-3 py-1.5 rounded-full text-xs font-medium ${config.statusBadge}`}
           >
-            <Icon icon="hugeicons:link-01" className="w-3 h-3" />
-            Go Live
-          </a>
-        )}
-      </div>
-
-      {/* Description */}
-      <p className="text-neutral-600 dark:text-neutral-300 text-sm mb-4 leading-relaxed flex-1">
-        {description}
-      </p>
-
+            {config.statusText}
+          </div>
+          
+          {status === "active" && liveUrl && (
+            <motion.a
+              href={liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-(--color-accent-soft) text-(--color-accent) rounded-full text-xs font-medium hover:bg-(--color-accent)/20 transition-colors duration-200"
+              title="View Live Site"
+            >
+              <Icon icon="solar:link-bold" className="w-3.5 h-3.5" />
       {/* Progress Bar (only for pending status) */}
       {status === "pending" && progress !== undefined && (
-        <div className="mb-4">
+        <div className="relative mb-4">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-xs text-neutral-500 dark:text-neutral-400">
-              Progress
+            <span className="text-xs text-(--color-muted) font-medium">
+              Development Progress
             </span>
-            <span className="text-xs font-medium text-neutral-600 dark:text-neutral-300">
+            <span className="text-xs font-semibold text-(--color-text)">
               {progress}%
             </span>
           </div>
-          <div className="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
-            <div
-              className="bg-yellow-500 dark:bg-yellow-400 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${progress}%` }}
-            ></div>
+          <div className="relative w-full bg-(--color-overlay) rounded-full h-2 overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="h-full bg-gradient-to-r from-yellow-500 to-yellow-400 rounded-full"
+            />
           </div>
         </div>
       )}
 
       {/* Footer */}
-      <div className="mt-auto pt-4 border-t border-neutral-200 dark:border-neutral-700 space-y-3">
+      <div className="relative mt-auto pt-4 border-t border-(--color-border) space-y-3">
         {/* Project Type */}
         {projectType && (
           <div className="flex items-center gap-2">
             <Icon
-              icon="hugeicons:code"
-              className="w-4 h-4 text-neutral-400 flex-shrink-0"
+              icon="solar:code-square-linear"
+              className="w-4 h-4 text-(--color-muted) flex-shrink-0"
             />
-            <span className="text-xs text-neutral-500 dark:text-neutral-400 font-medium">
+            <span className="text-xs text-(--color-muted) font-medium">
               {projectType}
             </span>
           </div>
@@ -159,23 +155,25 @@ const StatusCard: React.FC<StatusCardProps> = ({
         {stack && stack.length > 0 && (
           <div className="flex items-center gap-2">
             <Icon
-              icon="hugeicons:layers-01"
-              className="w-4 h-4 text-neutral-400 flex-shrink-0"
+              icon="solar:layers-minimalistic-linear"
+              className="w-4 h-4 text-(--color-muted) flex-shrink-0"
             />
-            <div className="flex items-center gap-1 flex-1 min-w-0">
-              <span className="text-xs text-neutral-500 dark:text-neutral-400 font-medium truncate">
-                {stack.slice(0, 2).join(", ")}
-              </span>
-              {stack.length > 2 && (
+            <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
+              {stack.slice(0, 3).map((tech, index) => (
+                <span
+                  key={index}
+                  className="text-xs px-2 py-1 rounded-lg bg-(--color-overlay) text-(--color-text) font-medium"
+                >
+                  {tech}
+                </span>
+              ))}
+              {stack.length > 3 && (
                 <div className="relative group">
-                  <div className="text-xs text-neutral-400 cursor-help">
-                    +{stack.length - 2}
-                  </div>
-                  {/* Custom Tooltip */}
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-neutral-800 dark:bg-neutral-700 text-white text-xs rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none z-50">
-                    {stack.join(", ")}
-                    {/* Arrow */}
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700"></div>
+                  <span className="text-xs px-2 py-1 rounded-lg bg-(--color-overlay) text-(--color-muted) font-medium cursor-help">
+                    +{stack.length - 3}
+                  </span>
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-(--color-surface) border border-(--color-border) text-(--color-text) text-xs rounded-xl whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 shadow-lg">
+                    {stack.slice(3).join(", ")}
                   </div>
                 </div>
               )}
@@ -188,10 +186,10 @@ const StatusCard: React.FC<StatusCardProps> = ({
           {lastUpdated && (
             <div className="flex items-center gap-2">
               <Icon
-                icon="hugeicons:clock-01"
-                className="w-4 h-4 text-neutral-400 flex-shrink-0"
+                icon="solar:calendar-linear"
+                className="w-4 h-4 text-(--color-muted) flex-shrink-0"
               />
-              <span className="text-xs text-neutral-500 dark:text-neutral-400">
+              <span className="text-xs text-(--color-muted)">
                 {lastUpdated}
               </span>
             </div>
@@ -199,19 +197,18 @@ const StatusCard: React.FC<StatusCardProps> = ({
 
           {/* Status Indicator Dot */}
           <div className="flex items-center gap-2 ml-auto">
-            <div
-              className={`w-2 h-2 rounded-full ${
-                status === "active"
-                  ? "bg-green-500 animate-pulse"
-                  : status === "pending"
-                  ? "bg-yellow-500"
-                  : "bg-gray-400"
-              }`}
-            ></div>
+            <motion.div
+              animate={status === "active" ? { scale: [1, 1.2, 1] } : {}}
+              transition={{ duration: 2, repeat: Infinity }}
+              className={`w-2 h-2 rounded-full ${config.pulseColor}`}
+            />
+            <span className="text-xs text-(--color-muted)">
+              {status === "active" ? "Online" : status === "pending" ? "Building" : "Offline"}
+            </span>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
