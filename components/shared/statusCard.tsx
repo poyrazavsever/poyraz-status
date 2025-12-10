@@ -8,7 +8,7 @@ interface StatusCardProps {
   status: "active" | "pending" | "inactive";
   lastUpdated?: string;
   clientName?: string;
-  projectType?: string;
+  projectType?: string; 
   stack?: string[];
   progress?: number;
   liveUrl?: string;
